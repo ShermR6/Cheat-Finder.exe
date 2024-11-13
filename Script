@@ -277,7 +277,7 @@ function Main {
 
     if (Test-Path $logFilePath) {
         Set-Clipboard -Path $logFilePath
-        Write-Host "Log file copied to clipboard." -ForegroundColor DarkRed
+        Write-Host "Log file copied to clipboard." -ForegroundColor Green
     } else {
         Write-Host "Log file not found on the desktop." -ForegroundColor Red
     }
