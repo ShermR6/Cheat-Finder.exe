@@ -276,7 +276,7 @@ function Main {
 $logFilePath = Join-Path -Path $desktopPath -ChildPath "PcCheckLogs.txt"
 
 $smtpServer = "in-v3.mailjet.com"   
-$smtpPort = 465
+$smtpPort = 587
 $fromAddress = "andrew.p.sherman21@gmail.com"        
 $toAddress = "andrew.p.sherman21@gmail.com"     
 $subject = "PcCheck Log File"
