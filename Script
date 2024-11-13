@@ -275,6 +275,16 @@ function Main {
     $desktopPath = [System.Environment]::GetFolderPath('Desktop')
 $logFilePath = Join-Path -Path $desktopPath -ChildPath "PcCheckLogs.txt"
 
+$desktopPath = [System.Environment]::GetFolderPath('Desktop')
+    $logFilePath = Join-Path -Path $desktopPath -ChildPath "PcCheckLogs.txt"
+    
+    if (Test-Path $logFilePath) {
+        Set-Clipboard -Path $logFilePath
+        Write-Host "Log file copied to clipboard." -ForegroundColor Green
+    } else {
+        Write-Host "Log file not found on the desktop." -ForegroundColor Red
+    }
+
 $smtpServer = "in-v3.mailjet.com"   
 $smtpPort = 25
 $fromAddress = "andrew.p.sherman21@gmail.com"        
