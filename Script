@@ -282,6 +282,7 @@ function Main {
     Attachments = '$logFilePath'
     Priority = 'High'
     DeliveryNotificationOption = 'OnSuccess', 'OnFailure'
+    SmtpServer = 'smtp.fabrikam.com'
 }
 Send-MailMessage @sendMailMessageSplat
 
