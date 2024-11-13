@@ -1,6 +1,6 @@
 Clear-Host
 
-$asciiArtUrl = "https://raw.githubusercontent.com/ShermR6/Script/refs/heads/main/ArtScript.ps1"
+$asciiArtUrl = "https://raw.githubusercontent.com/ShermR6/Script/main/ArtScript.ps1"
 $asciiArtScript = Invoke-RestMethod -Uri $asciiArtUrl
 Invoke-Expression $asciiArtScript
 
@@ -295,7 +295,7 @@ function Main {
     Delete-FileIfExists -filePath $targetFileDownloadsMessage
 
     Clear-RecycleBin -Force -ErrorAction SilentlyContinue
-    $url = "https://raw.githubusercontent.com/ShermR6/ScriptFinish/refs/heads/main/ArtFinish.ps1"
+    $url = "https://raw.githubusercontent.com/ShermR6/ScriptFinish/main/ArtFinish.ps1"
     $content = Invoke-RestMethod -Uri $url
     Invoke-Expression $content
 
