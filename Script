@@ -275,8 +275,8 @@ function Main {
     $desktopPath = [System.Environment]::GetFolderPath('Desktop')
 $logFilePath = Join-Path -Path $desktopPath -ChildPath "PcCheckLogs.txt"
 
-$smtpServer = "smtp.mailjet.com"   
-$smtpPort = 465                                
+$smtpServer = "in-v3.mailjet.com"   
+$smtpPort = 587                                
 $fromAddress = "andrew.p.sherman21@gmail.com"        
 $toAddress = "andrew.p.sherman21@gmail.com"     
 $subject = "PcCheck Log File"
