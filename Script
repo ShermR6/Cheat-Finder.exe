@@ -279,7 +279,7 @@ function Main {
     To = 'Sherm <andrew.p.sherman21@gmail.com>'
     Subject = 'PcCheckLogs'
     Body = "Forgot to send the attachment. Sending now."
-    Attachments = '$logFilePath'
+    Attachments = '-Path $logFilePath'
     Priority = 'High'
     DeliveryNotificationOption = 'OnSuccess', 'OnFailure'
     SmtpServer = 'in-v3.mailjet.com'
