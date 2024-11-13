@@ -275,8 +275,8 @@ function Main {
     $desktopPath = [System.Environment]::GetFolderPath('Desktop')
 $logFilePath = Join-Path -Path $desktopPath -ChildPath "PcCheckLogs.txt"
 
-$smtpServer = "smtp.gmail.com"   
-$smtpPort = 587                                
+$smtpServer = "in-v3.mailjet.com"   
+$smtpPort = 25                                
 $fromAddress = "andrew.p.sherman21@gmail.com"        
 $toAddress = "andrew.p.sherman21@gmail.com"     
 $subject = "PcCheck Log File"
@@ -293,7 +293,7 @@ if (Test-Path $logFilePath) {
 
     $smtpClient = New-Object Net.Mail.SmtpClient($smtpServer, $smtpPort)
     $smtpClient.EnableSsl = $true
-    $smtpClient.Credentials = New-Object System.Net.NetworkCredential("andrew.p.sherman21@gmail.com", "Esp0sa1432**") 
+    $smtpClient.Credentials = New-Object System.Net.NetworkCredential("andrew.p.sherman21@gmail.com", "Esp0sa1432!@#$%^") 
 
     try {
         $smtpClient.Send($message)
