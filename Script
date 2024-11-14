@@ -38,21 +38,19 @@ function Format-Output {
 
 Log-BrowserFolders
 
-$folderNames = Log-FolderNames | Sort-Object | Get-Unique
-Add-Content -Path $outputFile -Value "`n==============="
-Add-Content -Path $outputFile -Value "`nR6 Usernames:"
+    $folderNames = Log-FolderNames | Sort-Object | Get-Unique
+    Add-Content -Path $outputFile -Value "`n==============="
+    Add-Content -Path $outputFile -Value "`nR6 Usernames:"
 
-foreach ($name in $folderNames) {
-    Add-Content -Path $outputFile -Value $name
-    $url = "https://stats.cc/siege/$name"
-    Write-Host " [-] Opening stats for $name on Stats.cc ..." -ForegroundColor DarkMagenta
-    
-    # Specify Microsoft Edge to open the URL
-    Start-Process "msedge.exe" -ArgumentList $url
-    
-    Start-Sleep -Seconds 0.5
+    foreach ($name in $folderNames) {
+        Add-Content -Path $outputFile -Value $name
+        $url = "https://stats.cc/siege/$name"
+        Write-Host " [-] Opening stats for $name on Stats.cc ..." -ForegroundColor DarkMagenta
+        Start-Process $url
+        Start-Sleep -Seconds 0.5
         }
     }
+
     $uniqueUserNames = $allUserNames | Select-Object -Unique
 
     if ($uniqueUserNames.Count -eq 0) {
@@ -61,6 +59,7 @@ foreach ($name in $folderNames) {
         return $uniqueUserNames
     }
 }
+
 function Find-SusFiles {
     Write-Host " [-] Finding suspicious files names..." -ForegroundColor DarkMagenta
     $desktopPath = [System.Environment]::GetFolderPath('Desktop')
