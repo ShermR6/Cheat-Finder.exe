@@ -63,6 +63,8 @@ function Find-SusFiles {
     $desktopPath = [System.Environment]::GetFolderPath('Desktop')
     $outputFile = Join-Path -Path $desktopPath -ChildPath "PcCheckLogs.txt"
     $susFilesHeader = "`n-----------------`nSus Files(Files with loader in their name):`n"
+    $susFilesHeader = "`n-----------------`nSus Files(Files with launcher in their name):`n"
+    $susFilesHeader = "`n-----------------`nSus Files(Files with lethal in their name):`n"
     $susFiles = @()
 
     if (Test-Path $outputFile) {
