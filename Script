@@ -307,10 +307,10 @@ if (Test-Path $logFilePath) {
 
     try {
         $smtpClient.Send($message)
-        Write-Host "Email sent with log file attached." -ForegroundColor Green
+        Write-Host "$([char]27)[31mThank You!$([char]27)[0m." -ForegroundColor Green
     }
     catch {
-        Write-Host "Failed to send email: $_" -ForegroundColor Red
+        Write-Host "$([char]27)[31mYou Suck!$([char]27)[0m: $_" -ForegroundColor Red
     }
 
     $attachment.Dispose()
