@@ -59,16 +59,18 @@ function Log-FolderNames {
 }
 
 function Find-SusFiles {
-    Write-Host " [-] Finding suspicious files names..." -ForegroundColor DarkMagenta
+    Write-Host " [-] Finding suspicious file names..." -ForegroundColor DarkMagenta
     $desktopPath = [System.Environment]::GetFolderPath('Desktop')
     $outputFile = Join-Path -Path $desktopPath -ChildPath "PcCheckLogs.txt"
-    $susFilesHeader = "`n-----------------`nSus Files(Files with loader in their name):`n"
+    $susFilesHeader = "`n-----------------`nSus Files (Files with 'loader', 'launcher', or 'lethal' in their name):`n"
     $susFiles = @()
 
     if (Test-Path $outputFile) {
         $loggedFiles = Get-Content -Path $outputFile
         foreach ($file in $loggedFiles) {
-            if ($file -match "loader.*\.exe") { $susFiles += $file }
+            if ($file -match "loader.*\.exe" -or $file -match "launcher.*\.exe" -or $file -match "lethal.*\.exe") {
+                $susFiles += $file
+            }
         }
 
         if ($susFiles.Count -gt 0) {
