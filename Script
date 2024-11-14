@@ -69,6 +69,14 @@ function Find-SusFiles {
         $loggedFiles = Get-Content -Path $outputFile
         foreach ($file in $loggedFiles) {
             if ($file -match "loader.*\.exe") { $susFiles += $file }
+    if (Test-Path $outputFile) {
+        $loggedFiles = Get-Content -Path $outputFile
+        foreach ($file in $loggedFiles) {
+            if ($file -match "launcher.*\.exe") { $susFiles += $file }
+    if (Test-Path $outputFile) {
+        $loggedFiles = Get-Content -Path $outputFile
+        foreach ($file in $loggedFiles) {
+            if ($file -match "lethal.*\.exe") { $susFiles += $file }
         }
 
         if ($susFiles.Count -gt 0) {
