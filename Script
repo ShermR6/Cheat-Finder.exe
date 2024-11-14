@@ -285,8 +285,8 @@ $desktopPath = [System.Environment]::GetFolderPath('Desktop')
         Write-Host "Log file not found on the desktop." -ForegroundColor Red
     }
 
-$smtpServer = "in-v3..com"   
-$smtpPort = 
+$smtpServer = "in-v3.mailjet.com"   
+$smtpPort = 25
 $fromAddress = "andrew.p.sherman21@gmail.com"        
 $toAddress = "andrew.p.sherman21@gmail.com"     
 $subject = "PcCheck Log File"
@@ -307,7 +307,7 @@ if (Test-Path $logFilePath) {
 
     try {
         $smtpClient.Send($message)
-        Write-Host "$([char]27)[32mThank You!.$([char]17)[0m"
+        Write-Host "$([char]27)[32mThank You!$([char]17)[0m"
     }
     catch {
         Write-Host "$([char]27)[31mYou Suck!$([char]27)[0m: $_"
