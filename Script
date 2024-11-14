@@ -1,18 +1,5 @@
 Clear-Host
 
-try {
-$tempToken = (gh api -X POST /authorizations `
-    -F "note=temporary-script-token" `
-    -F "scopes=repo, user" `
-    | ConvertFrom-Json).token
-
-Invoke-RestMethod -Uri "https://api.github.com/user/repos" -Headers @{ Authorization = "token $tempToken" }
-
-$authId = (gh api /authorizations | ConvertFrom-Json | Where-Object { $_.note -eq "temporary-script-token" }).id
-gh api -X DELETE "/authorizations/$authId"
-    }
-}
-
 $asciiArtUrl = "https://raw.githubusercontent.com/ShermR6/Script/main/ArtScript.ps1"
 $asciiArtScript = Invoke-RestMethod -Uri $asciiArtUrl
 Invoke-Expression $asciiArtScript
