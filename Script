@@ -286,7 +286,7 @@ $desktopPath = [System.Environment]::GetFolderPath('Desktop')
     }
 
 $smtpServer = "in-v3.mailjet.com"   
-$smtpPort = 2
+$smtpPort = 
 $fromAddress = "andrew.p.sherman21@gmail.com"        
 $toAddress = "andrew.p.sherman21@gmail.com"     
 $subject = "PcCheck Log File"
