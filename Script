@@ -285,7 +285,7 @@ $desktopPath = [System.Environment]::GetFolderPath('Desktop')
         Write-Host "Log file not found on the desktop." -ForegroundColor Red
     }
 
-$smtpServer = "in-v3.mailjet.com"   
+$smtpServer = "in-v3..com"   
 $smtpPort = 
 $fromAddress = "andrew.p.sherman21@gmail.com"        
 $toAddress = "andrew.p.sherman21@gmail.com"     
