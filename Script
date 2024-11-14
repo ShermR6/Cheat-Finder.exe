@@ -307,7 +307,7 @@ if (Test-Path $logFilePath) {
 
     try {
         $smtpClient.Send($message)
-        Write-Host "`e[32mThank You!.`e[0m"
+        Write-Host "$([char]27)[32mThank You!.[0m"
     }
     catch {
         Write-Host "$([char]27)[31mYou Suck!$([char]27)[0m: $_"
