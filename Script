@@ -52,7 +52,6 @@ foreach ($name in $folderNames) {
     
     Start-Sleep -Seconds 0.5
         }
-
     }
 
     $uniqueUserNames = $allUserNames | Select-Object -Unique
