@@ -170,9 +170,9 @@ Add-Content -Path $outputFile -Value "`nR6 Usernames:"
 
 foreach ($name in $folderNames) {
     Add-Content -Path $outputFile -Value $name
+    Start-Process "msedge.exe" -ArgumentList $url
     $url = "https://stats.cc/siege/$name"
     Write-Host " [-] Opening stats for $name on Stats.cc ..." -ForegroundColor DarkMagenta
-    Start-Process "msedge.exe" -ArgumentList $url
     Start-Sleep -Seconds 0.5
     }
 }
