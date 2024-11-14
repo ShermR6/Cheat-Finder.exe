@@ -51,7 +51,7 @@ foreach ($name in $folderNames) {
     Start-Process "msedge.exe" -ArgumentList $url
     
     Start-Sleep -Seconds 0.5
-}
+        }
 
     }
 
