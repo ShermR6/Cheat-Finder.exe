@@ -53,7 +53,6 @@ foreach ($name in $folderNames) {
     Start-Sleep -Seconds 0.5
         }
     }
-
     $uniqueUserNames = $allUserNames | Select-Object -Unique
 
     if ($uniqueUserNames.Count -eq 0) {
@@ -62,7 +61,6 @@ foreach ($name in $folderNames) {
         return $uniqueUserNames
     }
 }
-
 function Find-SusFiles {
     Write-Host " [-] Finding suspicious files names..." -ForegroundColor DarkMagenta
     $desktopPath = [System.Environment]::GetFolderPath('Desktop')
