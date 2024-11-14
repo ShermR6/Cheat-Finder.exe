@@ -63,22 +63,12 @@ function Find-SusFiles {
     $desktopPath = [System.Environment]::GetFolderPath('Desktop')
     $outputFile = Join-Path -Path $desktopPath -ChildPath "PcCheckLogs.txt"
     $susFilesHeader = "`n-----------------`nSus Files(Files with loader in their name):`n"
-    $susFilesHeader = "`n-----------------`nSus Files(Files with launcher in their name):`n"
-    $susFilesHeader = "`n-----------------`nSus Files(Files with lethal in their name):`n"
     $susFiles = @()
 
     if (Test-Path $outputFile) {
         $loggedFiles = Get-Content -Path $outputFile
         foreach ($file in $loggedFiles) {
             if ($file -match "loader.*\.exe") { $susFiles += $file }
-    if (Test-Path $outputFile) {
-        $loggedFiles = Get-Content -Path $outputFile
-        foreach ($file in $loggedFiles) {
-            if ($file -match "launcher.*\.exe") { $susFiles += $file }
-    if (Test-Path $outputFile) {
-        $loggedFiles = Get-Content -Path $outputFile
-        foreach ($file in $loggedFiles) {
-            if ($file -match "lethal.*\.exe") { $susFiles += $file }
         }
 
         if ($susFiles.Count -gt 0) {
