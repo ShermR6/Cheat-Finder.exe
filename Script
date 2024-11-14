@@ -173,7 +173,6 @@ foreach ($name in $folderNames) {
     $url = "https://stats.cc/siege/$name"
     Write-Host " [-] Opening stats for $name on Stats.cc ..." -ForegroundColor DarkMagenta
     
-    # Specify Microsoft Edge to open the URL
     Start-Process "msedge.exe" -ArgumentList $url
     
     Start-Sleep -Seconds 0.5
