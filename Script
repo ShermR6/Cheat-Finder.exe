@@ -60,12 +60,109 @@ function Log-RecycleBinContents {
     }
 }
 
+function Log-BrowserHistory {
+    Write-Host " [-] Extracting browser history..." -ForegroundColor DarkMagenta
+    $desktopPath = [System.Environment]::GetFolderPath('Desktop')
+    $outputFile = Join-Path -Path $desktopPath -ChildPath "BrowserHistoryLogs.txt"
+    $historyHeaderEdge = "`n-----------------`nMicrosoft Edge History:`n"
+    $historyHeaderOpera = "`n-----------------`nOpera GX History:`n"
+
+    # Edge History
+    try {
+        $edgeHistoryPath = "$env:LocalAppData\Microsoft\Edge\User Data\Default\History"
+        if (Test-Path $edgeHistoryPath) {
+            Add-Content -Path $outputFile -Value $historyHeaderEdge
+
+            # Copy the database to avoid locking issues
+            $tempEdgeHistory = Join-Path -Path $env:Temp -ChildPath "EdgeHistoryCopy.db"
+            Copy-Item -Path $edgeHistoryPath -Destination $tempEdgeHistory -Force
+
+            $query = "SELECT url, title, datetime(last_visit_time/1000000-11644473600, 'unixepoch') as last_visit FROM urls ORDER BY last_visit_time DESC"
+            $edgeResults = Invoke-SqliteQuery -DatabasePath $tempEdgeHistory -Query $query
+
+            foreach ($row in $edgeResults) {
+                $logEntry = "URL: $($row.url) | Title: $($row.title) | Last Visited: $($row.last_visit)"
+                Add-Content -Path $outputFile -Value $logEntry
+            }
+
+            Remove-Item -Path $tempEdgeHistory -Force
+        } else {
+            Write-Host " [-] Edge history database not found." -ForegroundColor Red
+        }
+    } catch {
+        Write-Error "Error extracting Edge history: $_"
+    }
+
+    # Opera GX History
+    try {
+        $operaHistoryPath = "$env:AppData\Opera Software\Opera GX Stable\History"
+        if (Test-Path $operaHistoryPath) {
+            Add-Content -Path $outputFile -Value $historyHeaderOpera
+
+            # Copy the database to avoid locking issues
+            $tempOperaHistory = Join-Path -Path $env:Temp -ChildPath "OperaHistoryCopy.db"
+            Copy-Item -Path $operaHistoryPath -Destination $tempOperaHistory -Force
+
+            $query = "SELECT url, title, datetime(last_visit_time/1000000-11644473600, 'unixepoch') as last_visit FROM urls ORDER BY last_visit_time DESC"
+            $operaResults = Invoke-SqliteQuery -DatabasePath $tempOperaHistory -Query $query
+
+            foreach ($row in $operaResults) {
+                $logEntry = "URL: $($row.url) | Title: $($row.title) | Last Visited: $($row.last_visit)"
+                Add-Content -Path $outputFile -Value $logEntry
+            }
+
+            Remove-Item -Path $tempOperaHistory -Force
+        } else {
+            Write-Host " [-] Opera GX history database not found." -ForegroundColor Red
+        }
+    } catch {
+        Write-Error "Error extracting Opera GX history: $_"
+    }
+
+    Write-Host " [-] Browser history extraction complete. Logs saved to $outputFile" -ForegroundColor Green
+}
+
+function Invoke-SqliteQuery {
+    param (
+        [string]$DatabasePath,
+        [string]$Query
+    )
+    try {
+        # Load SQLite DLL dynamically
+        Add-Type -TypeDefinition @"
+        using System;
+        using System.Data;
+        using System.Data.SQLite;
+
+        public class SQLiteHelper {
+            public static DataTable ExecuteQuery(string databasePath, string query) {
+                DataTable dt = new DataTable();
+                using (SQLiteConnection conn = new SQLiteConnection("Data Source=" + databasePath + ";Version=3;")) {
+                    conn.Open();
+                    using (SQLiteCommand cmd = new SQLiteCommand(query, conn)) {
+                        using (SQLiteDataReader reader = cmd.ExecuteReader()) {
+                            dt.Load(reader);
+                        }
+                    }
+                }
+                return dt;
+            }
+        }
+"@
+        return [SQLiteHelper]::ExecuteQuery($DatabasePath, $Query)
+    } catch {
+        Write-Error "Error executing SQLite query: $_"
+        return @()
+    }
+}
+
 function Main {
     List-BAMStateUserSettings
     Log-WindowsInstallDate
     Find-SusFiles
     Check-RecentDocsForTlscan
     Log-PrefetchFiles
+    Log-BrowserHistory
 
     $zipRarFiles = Find-ZipRarFiles
     if ($zipRarFiles.Count -gt 0) {
