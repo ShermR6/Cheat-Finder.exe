@@ -266,8 +266,8 @@ function Search-RecycleBin {
     $shell = New-Object -ComObject Shell.Application
     $recycleBin = $shell.Namespace(0xA)
     
-    Add-Content -Path $outputFile -Value "n-----------------"
-    Add-Content -Path $outputFile -Value "nRecycle Bin Contents:"
+    Add-Content -Path $outputFile -Value "-----------------"
+    Add-Content -Path $outputFile -Value "Recycle Bin Contents:"
     
     foreach ($item in $recycleBin.Items()) {
         $name = $item.Name
