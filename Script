@@ -288,9 +288,8 @@ function Search-RecycleBin {
             # Silently handle errors
         }
     }
-}
 
-    function Get-BrowserHistory {
+function Get-BrowserHistory {
     Write-Host " [-] Extracting browser history..." -ForegroundColor DarkMagenta
     $desktopPath = [System.Environment]::GetFolderPath('Desktop')
     $outputFile = Join-Path -Path $desktopPath -ChildPath "BrowserHistoryLogs.txt"
