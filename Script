@@ -288,6 +288,7 @@ function Search-RecycleBin {
             # Silently handle errors
         }
     }
+}
 
     function Get-BrowserHistory {
     Write-Host " [-] Extracting browser history..." -ForegroundColor DarkMagenta
