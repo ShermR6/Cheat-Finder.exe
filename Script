@@ -285,9 +285,9 @@ function Search-RecycleBin {
                 Add-Content -Path $outputFile -Value "First Line: $firstLine"
             }
         } catch {
-            # Silently handle errors
         }
     }
+}
 
 function Get-BrowserHistory {
     Write-Host " [-] Extracting browser history..." -ForegroundColor DarkMagenta
