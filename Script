@@ -250,7 +250,7 @@ function Check-RecentDocsForTlscan {
                 $desktopPath = [System.Environment]::GetFolderPath('Desktop')
                 if (-Not (Test-Path $desktopPath)) {
                     Write-Host "Desktop path not found!" -ForegroundColor Red
-                    return
+                    # Don't return early, continue with logging
                 }
 
                 $outputFile = Join-Path -Path $desktopPath -ChildPath "PcCheckLogs.txt"
@@ -270,12 +270,13 @@ function Check-RecentDocsForTlscan {
         Write-Host " [-] No .tlscan files found." -ForegroundColor Green
     }
 }
+
 function Log-PrefetchFiles {
     Write-Host " [-] Fetching Last Ran Dates..." -ForegroundColor DarkMagenta
     $prefetchPath = "C:\Windows\Prefetch"
     $desktopPath = [System.Environment]::GetFolderPath('Desktop')
     $outputFile = Join-Path -Path $desktopPath -ChildPath "PcCheckLogs.txt"
-    $pfFilesHeader = "n=======================n.pf files:n"
+    $pfFilesHeader = "=======================\n.pf files:\n"
 
     if (Test-Path $prefetchPath) {
         $pfFiles = Get-ChildItem -Path $prefetchPath -Filter *.pf -File
@@ -290,15 +291,6 @@ function Log-PrefetchFiles {
         }
     } else {
         Write-Host "Prefetch folder not found." -ForegroundColor Red
-    }
-}
-
-function Delete-FileIfExists {
-    param (
-        [string]$filePath
-    )
-    if (Test-Path $filePath) {
-        Remove-Item -Path $filePath -Force -ErrorAction SilentlyContinue
     }
 }
 
