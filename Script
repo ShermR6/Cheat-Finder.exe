@@ -205,7 +205,9 @@ function Log-WindowsInstallDate {
 }
 
 function Check-RecentDocsForTlscan {
-    Write-Host " [-] Checking" -ForegroundColor DarkMagenta -NoNewline; Write-Host " for .tlscan" -ForegroundColor White -NoNewline; Write-Host " folders..." -ForegroundColor DarkMagenta
+    Write-Host " [-] Checking" -ForegroundColor DarkMagenta -NoNewline
+    Write-Host " for .tlscan" -ForegroundColor White -NoNewline
+    Write-Host " folders..." -ForegroundColor DarkMagenta
     $recentDocsPath = "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\RecentDocs"
     $tlscanFound = $false
     if (Test-Path $recentDocsPath) {
@@ -213,16 +215,23 @@ function Check-RecentDocsForTlscan {
         foreach ($item in $recentDocs) {
             if ($item.PSChildName -match "\.tlscan") {
                 $tlscanFound = $true
-                $folderPath = Get-ItemProperty -Path "$recentDocsPath\$($item.PSChildName)" -Name MRUListEx
+                $folderPathProperty = Get-ItemProperty -Path "$recentDocsPath\$($item.PSChildName)" -Name MRUListEx -ErrorAction SilentlyContinue
+                if ($folderPathProperty) {
+                    $folderPath = $folderPathProperty.MRUListEx
+                } else {
+                    Write-Host "No MRUListEx property found for $($item.PSChildName)" -ForegroundColor Yellow
+                    continue
+                }
                 $desktopPath = [System.Environment]::GetFolderPath('Desktop')
                 $outputFile = Join-Path -Path $desktopPath -ChildPath "PcCheckLogs.txt"
-                Add-Content -Path $outputFile -Value ".tlscan FOUND. DMA SETUP SOFTWARE DETECTED in $folderPath"
+                $timestamp = (Get-Date).ToString("yyyy-MM-dd HH:mm:ss")
+                Add-Content -Path $outputFile -Value "[$timestamp] .tlscan FOUND. DMA SETUP SOFTWARE DETECTED in $folderPath"
                 Write-Host ".tlscan FOUND. DMA SETUP SOFTWARE DETECTED in $folderPath" -ForegroundColor Red
             }
         }
     }
     if (-not $tlscanFound) {
-        Write-Host " [-] No .tlscan ext found." -ForegroundColor Green
+        Write-Host " [-] No .tlscan files found." -ForegroundColor Green
     }
 }
 
