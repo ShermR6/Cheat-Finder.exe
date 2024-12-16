@@ -270,7 +270,6 @@ function Check-RecentDocsForTlscan {
         Write-Host " [-] No .tlscan files found." -ForegroundColor Green
     }
 }
-
 function Log-PrefetchFiles {
     Write-Host " [-] Fetching Last Ran Dates..." -ForegroundColor DarkMagenta
     $prefetchPath = "C:\Windows\Prefetch"
