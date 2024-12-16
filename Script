@@ -208,28 +208,64 @@ function Check-RecentDocsForTlscan {
     Write-Host " [-] Checking" -ForegroundColor DarkMagenta -NoNewline
     Write-Host " for .tlscan" -ForegroundColor White -NoNewline
     Write-Host " folders..." -ForegroundColor DarkMagenta
+
+    # Registry path for RecentDocs
     $recentDocsPath = "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\RecentDocs"
     $tlscanFound = $false
+
+    # Check if the RecentDocs path exists
     if (Test-Path $recentDocsPath) {
         $recentDocs = Get-ChildItem -Path $recentDocsPath
+
+        # Check if there are any recent documents
+        if ($recentDocs.Count -eq 0) {
+            Write-Host "No recent documents found." -ForegroundColor Yellow
+        }
+
+        # Process each recent document
         foreach ($item in $recentDocs) {
-            if ($item.PSChildName -match "\.tlscan") {
+            Write-Host "Checking item: $($item.PSChildName)" -ForegroundColor Cyan
+
+            # Check if the file matches the .tlscan extension (case insensitive)
+            if ($item.PSChildName -match "\.tlscan$") {
                 $tlscanFound = $true
-                $folderPathProperty = Get-ItemProperty -Path "$recentDocsPath\$($item.PSChildName)" -Name MRUListEx -ErrorAction SilentlyContinue
-                if ($folderPathProperty) {
-                    $folderPath = $folderPathProperty.MRUListEx
-                } else {
-                    Write-Host "No MRUListEx property found for $($item.PSChildName)" -ForegroundColor Yellow
+                Write-Host ".tlscan file found: $($item.PSChildName)" -ForegroundColor Red
+
+                # Get the MRUListEx property for the item
+                try {
+                    $folderPathProperty = Get-ItemProperty -Path "$recentDocsPath\$($item.PSChildName)" -Name MRUListEx -ErrorAction Stop
+                    if ($folderPathProperty) {
+                        $folderPath = $folderPathProperty.MRUListEx
+                    } else {
+                        Write-Host "No MRUListEx property found for $($item.PSChildName)" -ForegroundColor Yellow
+                        continue
+                    }
+                }
+                catch {
+                    Write-Host "Error accessing MRUListEx property for $($item.PSChildName): $_" -ForegroundColor Red
                     continue
                 }
+
+                # Output file path on the desktop
                 $desktopPath = [System.Environment]::GetFolderPath('Desktop')
+                if (-Not (Test-Path $desktopPath)) {
+                    Write-Host "Desktop path not found!" -ForegroundColor Red
+                    return
+                }
+
                 $outputFile = Join-Path -Path $desktopPath -ChildPath "PcCheckLogs.txt"
                 $timestamp = (Get-Date).ToString("yyyy-MM-dd HH:mm:ss")
+
+                # Append log to the file
                 Add-Content -Path $outputFile -Value "[$timestamp] .tlscan FOUND. DMA SETUP SOFTWARE DETECTED in $folderPath"
                 Write-Host ".tlscan FOUND. DMA SETUP SOFTWARE DETECTED in $folderPath" -ForegroundColor Red
             }
         }
+    } else {
+        Write-Host "[-] The registry path '$recentDocsPath' does not exist." -ForegroundColor Red
     }
+
+    # If no .tlscan files were found, output a message
     if (-not $tlscanFound) {
         Write-Host " [-] No .tlscan files found." -ForegroundColor Green
     }
