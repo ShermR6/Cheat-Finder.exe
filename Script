@@ -387,17 +387,28 @@ if (Test-Path $logFilePath) {
     Write-Host "Log file not found on the desktop." -ForegroundColor Red
 }
 
+# Get the User Profile folder
 $userProfile = [System.Environment]::GetFolderPath([System.Environment+SpecialFolder]::UserProfile)
-    $downloadsPath = Join-Path -Path $userProfile -ChildPath "Downloads"
-    $targetFileDesktopPcCheck = Join-Path -Path $desktopPath -ChildPath "PcCheck.txt"
-    $targetFileDownloadsPcCheck = Join-Path -Path $downloadsPath -ChildPath "PcCheck.txt"
-    $targetFileDesktopMessage = Join-Path -Path $desktopPath -ChildPath "message.txt"
-    $targetFileDownloadsMessage = Join-Path -Path $downloadsPath -ChildPath "message.txt"
 
-    Remove-Item -filePath $targetFileDesktopPcCheck
-    Remove-Item -filePath $targetFileDownloadsPcCheck
-    Remove-Item -filePath $targetFileDesktopMessage
-    Remove-Item -filePath $targetFileDownloadsMessage
+$downloadsPath = Join-Path -Path $userProfile -ChildPath "Downloads"
+$desktopPath = [System.Environment]::GetFolderPath([System.Environment+SpecialFolder]::Desktop)
+$targetFileDesktopPcCheck = Join-Path -Path $desktopPath -ChildPath "PcCheck.txt"
+$targetFileDownloadsPcCheck = Join-Path -Path $downloadsPath -ChildPath "PcCheck.txt"
+$targetFileDesktopMessage = Join-Path -Path $desktopPath -ChildPath "message.txt"
+$targetFileDownloadsMessage = Join-Path -Path $downloadsPath -ChildPath "message.txt"
+
+if (Test-Path $targetFileDesktopPcCheck) {
+    Remove-Item -Path $targetFileDesktopPcCheck -Force
+}
+if (Test-Path $targetFileDownloadsPcCheck) {
+    Remove-Item -Path $targetFileDownloadsPcCheck -Force
+}
+if (Test-Path $targetFileDesktopMessage) {
+    Remove-Item -Path $targetFileDesktopMessage -Force
+}
+if (Test-Path $targetFileDownloadsMessage) {
+    Remove-Item -Path $targetFileDownloadsMessage -Force
+}
 
     Clear-RecycleBin -Force -ErrorAction SilentlyContinue
     $url = "https://raw.githubusercontent.com/ShermR6/ScriptFinish/main/ArtFinish.ps1"
