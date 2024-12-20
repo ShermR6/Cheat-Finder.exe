@@ -265,7 +265,6 @@ function Check-RecentDocsForTlscan {
         Write-Host "[-] The registry path '$recentDocsPath' does not exist." -ForegroundColor Red
     }
 
-    # If no .tlscan files were found, output a message
     if (-not $tlscanFound) {
         Write-Host " [-] No .tlscan files found." -ForegroundColor Green
     }
