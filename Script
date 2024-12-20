@@ -387,7 +387,6 @@ if (Test-Path $logFilePath) {
     Write-Host "Log file not found on the desktop." -ForegroundColor Red
 }
 
-# Get the User Profile folder
 $userProfile = [System.Environment]::GetFolderPath([System.Environment+SpecialFolder]::UserProfile)
 
 $downloadsPath = Join-Path -Path $userProfile -ChildPath "Downloads"
