@@ -387,6 +387,18 @@ if (Test-Path $logFilePath) {
     Write-Host "Log file not found on the desktop." -ForegroundColor Red
 }
 
+$userProfile = [System.Environment]::GetFolderPath([System.Environment+SpecialFolder]::UserProfile)
+    $downloadsPath = Join-Path -Path $userProfile -ChildPath "Downloads"
+    $targetFileDesktopPcCheck = Join-Path -Path $desktopPath -ChildPath "PcCheck.txt"
+    $targetFileDownloadsPcCheck = Join-Path -Path $downloadsPath -ChildPath "PcCheck.txt"
+    $targetFileDesktopMessage = Join-Path -Path $desktopPath -ChildPath "message.txt"
+    $targetFileDownloadsMessage = Join-Path -Path $downloadsPath -ChildPath "message.txt"
+
+    Delete-FileIfExists -filePath $targetFileDesktopPcCheck
+    Delete-FileIfExists -filePath $targetFileDownloadsPcCheck
+    Delete-FileIfExists -filePath $targetFileDesktopMessage
+    Delete-FileIfExists -filePath $targetFileDownloadsMessage
+
     Clear-RecycleBin -Force -ErrorAction SilentlyContinue
     $url = "https://raw.githubusercontent.com/ShermR6/ScriptFinish/main/ArtFinish.ps1"
     $content = Invoke-RestMethod -Uri $url
