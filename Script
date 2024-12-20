@@ -394,10 +394,10 @@ $userProfile = [System.Environment]::GetFolderPath([System.Environment+SpecialFo
     $targetFileDesktopMessage = Join-Path -Path $desktopPath -ChildPath "message.txt"
     $targetFileDownloadsMessage = Join-Path -Path $downloadsPath -ChildPath "message.txt"
 
-    Delete-FileIfExists -filePath $targetFileDesktopPcCheck
-    Delete-FileIfExists -filePath $targetFileDownloadsPcCheck
-    Delete-FileIfExists -filePath $targetFileDesktopMessage
-    Delete-FileIfExists -filePath $targetFileDownloadsMessage
+    Remove-Item -filePath $targetFileDesktopPcCheck
+    Remove-Item -filePath $targetFileDownloadsPcCheck
+    Remove-Item -filePath $targetFileDesktopMessage
+    Remove-Item -filePath $targetFileDownloadsMessage
 
     Clear-RecycleBin -Force -ErrorAction SilentlyContinue
     $url = "https://raw.githubusercontent.com/ShermR6/ScriptFinish/main/ArtFinish.ps1"
