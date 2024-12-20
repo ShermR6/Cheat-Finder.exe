@@ -4,7 +4,7 @@ $asciiArtUrl = "https://raw.githubusercontent.com/ShermR6/Script/main/ArtScript.
 $asciiArtScript = Invoke-RestMethod -Uri $asciiArtUrl
 Invoke-Expression $asciiArtScript
 
-$encodedTitle = "Q2hlYXQgRmluZGVyLmV4ZQ=="
+$encodedTitle = "UEMgQ2hlY2tlcg=="
 $titleText = [System.Text.Encoding]::UTF8.GetString([System.Convert]::FromBase64String($encodedTitle))
 $Host.UI.RawUI.WindowTitle = $titleText
 
