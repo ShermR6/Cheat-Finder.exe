@@ -331,6 +331,7 @@ function Main {
     Check-RecentDocsForTlscan
     Log-PrefetchFiles
     Search-RecycleBin
+    Delete-FileIfExists
 
     $zipRarFiles = Find-ZipRarFiles
     if ($zipRarFiles.Count -gt 0) {
