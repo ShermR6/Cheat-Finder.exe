@@ -324,6 +324,42 @@ function Search-RecycleBin {
     }
 }
 
+function Get-PCIeSlotInfo {
+    Write-Host "Scanning PCIe slots and devices..." -ForegroundColor Cyan
+    
+    $pciControllers = Get-WmiObject -Class Win32_DeviceProperty | 
+        Where-Object { $_.KeyName -like "*PCI\\VEN*" }
+    
+    $physicalSlots = Get-WmiObject -Class Win32_SystemSlot | 
+        Where-Object { $_.SlotDesignation -like "*PCI*" }
+    
+    $pciDevices = Get-WmiObject -Class Win32_PnPEntity | 
+        Where-Object { $_.PNPDeviceID -like "*PCI\\VEN*" }
+    
+    Write-Host "`Physical PCIe Slots:" -ForegroundColor Green
+    foreach ($slot in $physicalSlots) {
+        Write-Host "`Slot Designation: $($slot.SlotDesignation)"
+        Write-Host "Status: $($slot.Status)"
+        Write-Host "Slot Type: $($slot.SlotType)"
+        Write-Host "Current Usage: $($slot.CurrentUsage)"
+        Write-Host "Bus Width: $($slot.MaxDataWidth) bit"
+    }
+    
+    Write-Host "`Occupied PCIe Slots (Devices Installed):" -ForegroundColor Green
+    foreach ($device in $pciDevices) {
+        Write-Host "`Device Name: $($device.Name)"
+        Write-Host "Device ID: $($device.DeviceID)"
+        Write-Host "Status: $($device.Status)"
+        
+        $deviceProps = Get-WmiObject -Class Win32_PnPSignedDriver | 
+            Where-Object { $_.DeviceID -eq $device.DeviceID }
+        if ($deviceProps) {
+            Write-Host "Driver Name: $($deviceProps.DriverName)"
+            Write-Host "Driver Version: $($deviceProps.DriverVersion)"
+        }
+    }
+}
+
 function Main {
     List-BAMStateUserSettings
     Log-WindowsInstallDate
@@ -331,6 +367,7 @@ function Main {
     Check-RecentDocsForTlscan
     Log-PrefetchFiles
     Search-RecycleBin
+    Get-PCIeSlotInfo
 
     $zipRarFiles = Find-ZipRarFiles
     if ($zipRarFiles.Count -gt 0) {
