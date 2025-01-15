@@ -332,41 +332,48 @@ function Check-PCIeSlots {
     $desktopPath = [System.Environment]::GetFolderPath('Desktop')
     $outputFile = Join-Path -Path $desktopPath -ChildPath "PcCheckLogs.txt"
     
-    Add-Content -Path $outputFile -Value "n==============="
-    Add-Content -Path $outputFile -Value "PCIe Slot Information:"
+    Add-Content -Path $outputFile -Value "n-----------------"
+    Add-Content -Path $outputFile -Value "PCIe Information:"
     
-    $physicalSlots = Get-WmiObject -Class Win32_SystemSlot | 
-        Where-Object { $_.SlotDesignation -like "*PCI*" }
-    
-    Add-Content -Path $outputFile -Value "nPhysical PCIe Slots:"
-    foreach ($slot in $physicalSlots) {
-        Add-Content -Path $outputFile -Value "Slot Designation: $($slot.SlotDesignation)"
-        Add-Content -Path $outputFile -Value "Status: $($slot.Status)"
-        Add-Content -Path $outputFile -Value "Slot Type: $($slot.SlotType)"
-        Add-Content -Path $outputFile -Value "Current Usage: $($slot.CurrentUsage)"
-        Add-Content -Path $outputFile -Value "Bus Width: $($slot.MaxDataWidth) bit"
-        Add-Content -Path $outputFile -Value "------------------------"
-    }
-    
-    $pciDevices = Get-WmiObject -Class Win32_PnPEntity | 
-        Where-Object { $_.PNPDeviceID -like "*PCI\\VEN*" }
-    
-    Add-Content -Path $outputFile -Value "nOccupied PCIe Slots (Devices Installed):"
-    foreach ($device in $pciDevices) {
-        Add-Content -Path $outputFile -Value "Device Name: $($device.Name)"
-        Add-Content -Path $outputFile -Value "Device ID: $($device.DeviceID)"
-        Add-Content -Path $outputFile -Value "Status: $($device.Status)"
+    try {
+        $pcieInfo = @()
         
-        $deviceProps = Get-WmiObject -Class Win32_PnPSignedDriver | 
-            Where-Object { $_.DeviceID -eq $device.DeviceID }
-        if ($deviceProps) {
-            Add-Content -Path $outputFile -Value "Driver Name: $($deviceProps.DriverName)"
-            Add-Content -Path $outputFile -Value "Driver Version: $($deviceProps.DriverVersion)"
+        $physicalSlots = Get-WmiObject -Class Win32_SystemSlot | 
+            Where-Object { $_.SlotDesignation -like "*PCI*" }
+        
+        if ($physicalSlots) {
+            foreach ($slot in $physicalSlots) {
+                $slotInfo = "Slot: $($slot.SlotDesignation) | Type: $($slot.SlotType) | Status: $($slot.Status) | Usage: $($slot.CurrentUsage)"
+                $pcieInfo += $slotInfo
+            }
+        } else {
+            $pcieInfo += "No PCIe slots detected"
         }
-        Add-Content -Path $outputFile -Value "------------------------"
+        
+        $pciDevices = Get-WmiObject -Class Win32_PnPEntity | 
+            Where-Object { $_.PNPDeviceID -like "*PCI\\VEN*" }
+        
+        if ($pciDevices) {
+            $pcieInfo += ""  
+            foreach ($device in $pciDevices) {
+                $deviceProps = Get-WmiObject -Class Win32_PnPSignedDriver | 
+                    Where-Object { $_.DeviceID -eq $device.DeviceID }
+                
+                $deviceInfo = "$($device.Name)"
+                if ($deviceProps) {
+                    $deviceInfo += " | Driver: $($deviceProps.DriverName) v$($deviceProps.DriverVersion)"
+                }
+                $deviceInfo += " | Status: $($device.Status)"
+                $pcieInfo += $deviceInfo
+            }
+        } else {
+            $pcieInfo += "No PCIe devices detected"
+        }
+        
+        $pcieInfo | ForEach-Object {
+            Add-Content -Path $outputFile -Value $_
+        }
     }
-    
-    Write-Host " [-] PCIe information logged to PcCheckLogs.txt" -ForegroundColor Green
 }
 
 function Main {
