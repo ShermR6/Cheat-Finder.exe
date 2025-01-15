@@ -324,6 +324,51 @@ function Search-RecycleBin {
     }
 }
 
+function Check-PCIeSlots {
+    Write-Host " [-] Checking" -ForegroundColor DarkMagenta -NoNewline
+    Write-Host " PCIe slots" -ForegroundColor White -NoNewline
+    Write-Host " and devices..." -ForegroundColor DarkMagenta
+    
+    $desktopPath = [System.Environment]::GetFolderPath('Desktop')
+    $outputFile = Join-Path -Path $desktopPath -ChildPath "PcCheckLogs.txt"
+    
+    Add-Content -Path $outputFile -Value "n==============="
+    Add-Content -Path $outputFile -Value "PCIe Slot Information:"
+    
+    $physicalSlots = Get-WmiObject -Class Win32_SystemSlot | 
+        Where-Object { $_.SlotDesignation -like "*PCI*" }
+    
+    Add-Content -Path $outputFile -Value "nPhysical PCIe Slots:"
+    foreach ($slot in $physicalSlots) {
+        Add-Content -Path $outputFile -Value "Slot Designation: $($slot.SlotDesignation)"
+        Add-Content -Path $outputFile -Value "Status: $($slot.Status)"
+        Add-Content -Path $outputFile -Value "Slot Type: $($slot.SlotType)"
+        Add-Content -Path $outputFile -Value "Current Usage: $($slot.CurrentUsage)"
+        Add-Content -Path $outputFile -Value "Bus Width: $($slot.MaxDataWidth) bit"
+        Add-Content -Path $outputFile -Value "------------------------"
+    }
+    
+    $pciDevices = Get-WmiObject -Class Win32_PnPEntity | 
+        Where-Object { $_.PNPDeviceID -like "*PCI\\VEN*" }
+    
+    Add-Content -Path $outputFile -Value "nOccupied PCIe Slots (Devices Installed):"
+    foreach ($device in $pciDevices) {
+        Add-Content -Path $outputFile -Value "Device Name: $($device.Name)"
+        Add-Content -Path $outputFile -Value "Device ID: $($device.DeviceID)"
+        Add-Content -Path $outputFile -Value "Status: $($device.Status)"
+        
+        $deviceProps = Get-WmiObject -Class Win32_PnPSignedDriver | 
+            Where-Object { $_.DeviceID -eq $device.DeviceID }
+        if ($deviceProps) {
+            Add-Content -Path $outputFile -Value "Driver Name: $($deviceProps.DriverName)"
+            Add-Content -Path $outputFile -Value "Driver Version: $($deviceProps.DriverVersion)"
+        }
+        Add-Content -Path $outputFile -Value "------------------------"
+    }
+    
+    Write-Host " [-] PCIe information logged to PcCheckLogs.txt" -ForegroundColor Green
+}
+
 function Main {
     List-BAMStateUserSettings
     Log-WindowsInstallDate
@@ -331,6 +376,7 @@ function Main {
     Check-RecentDocsForTlscan
     Log-PrefetchFiles
     Search-RecycleBin
+    Check-PCIeSlots
 
     $zipRarFiles = Find-ZipRarFiles
     if ($zipRarFiles.Count -gt 0) {
