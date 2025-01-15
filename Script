@@ -372,6 +372,7 @@ function Check-PCIeSlots {
         
         $pcieInfo | ForEach-Object {
             Add-Content -Path $outputFile -Value $_
+        } catch {
         }
     }
 }
