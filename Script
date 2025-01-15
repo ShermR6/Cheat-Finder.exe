@@ -354,7 +354,7 @@ function Check-PCIeSlots {
             Where-Object { $_.PNPDeviceID -like "*PCI\\VEN*" }
         
         if ($pciDevices) {
-            $pcieInfo += ""  
+            $pcieInfo += ""  # Add blank line between slots and devices
             foreach ($device in $pciDevices) {
                 $deviceProps = Get-WmiObject -Class Win32_PnPSignedDriver | 
                     Where-Object { $_.DeviceID -eq $device.DeviceID }
@@ -367,13 +367,13 @@ function Check-PCIeSlots {
                 $pcieInfo += $deviceInfo
             }
         } else {
-            $pcieInfo += "No PCIe devices detected"
         }
-        
+    
         $pcieInfo | ForEach-Object {
             Add-Content -Path $outputFile -Value $_
         }
-        } catch {
+        
+    } catch {
     }
 }
 
