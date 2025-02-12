@@ -328,52 +328,72 @@ function Check-PCIeSlots {
     Write-Host " [-] Checking" -ForegroundColor DarkMagenta -NoNewline
     Write-Host " PCIe slots" -ForegroundColor White -NoNewline
     Write-Host " and devices..." -ForegroundColor DarkMagenta
-    
+
     $desktopPath = [System.Environment]::GetFolderPath('Desktop')
     $outputFile = Join-Path -Path $desktopPath -ChildPath "PcCheckLogs.txt"
-    
-    Add-Content -Path $outputFile -Value "n-----------------"
+
+    Add-Content -Path $outputFile -Value "`n-----------------"
     Add-Content -Path $outputFile -Value "PCIe Information:"
-    
+
     try {
         $pcieInfo = @()
-        
+
+        # Get PCIe slot information
         $physicalSlots = Get-WmiObject -Class Win32_SystemSlot | 
             Where-Object { $_.SlotDesignation -like "*PCI*" }
-        
+
         if ($physicalSlots) {
             foreach ($slot in $physicalSlots) {
-                $slotInfo = "Slot: $($slot.SlotDesignation) | Type: $($slot.SlotType) | Status: $($slot.Status) | Usage: $($slot.CurrentUsage)"
+                $slotInfo = "Slot: $($slot.SlotDesignation) | Status: $($slot.Status) | Type: $($slot.AdapterType)"
                 $pcieInfo += $slotInfo
             }
         } else {
-            $pcieInfo += "No PCIe slots detected"
+            $pcieInfo += "No PCIe slots detected."
         }
-        
-        $pciDevices = Get-WmiObject -Class Win32_PnPEntity | 
-            Where-Object { $_.PNPDeviceID -like "*PCI\\VEN*" }
-        
-        if ($pciDevices) {
-            $pcieInfo += ""  # Add blank line between slots and devices
-            foreach ($device in $pciDevices) {
-                $deviceProps = Get-WmiObject -Class Win32_PnPSignedDriver | 
-                    Where-Object { $_.DeviceID -eq $device.DeviceID }
-                
-                $deviceInfo = "$($device.Name)"
-                if ($deviceProps) {
-                    $deviceInfo += " | Driver: $($deviceProps.DriverName) v$($deviceProps.DriverVersion)"
-                }
-                $deviceInfo += " | Status: $($device.Status)"
-                $pcieInfo += $deviceInfo
-            }
-        } else {
-        }
-    
-        $pcieInfo | ForEach-Object {
+
+        $pcieInfo | ForEach-Object { 
+            Write-Host $_ -ForegroundColor Cyan
             Add-Content -Path $outputFile -Value $_
         }
-        
+
+        Add-Content -Path $outputFile -Value "`nDetected PCIe GPUs:"
+        Write-Host "`n=== Detected PCIe GPUs ===" -ForegroundColor Yellow
+
+        $gpuDevices = Get-WmiObject Win32_PnPEntity | Where-Object { 
+            $_.PNPDeviceID -match "PCI" -and $_.Name -match "Display" 
+        } | Select-Object Name, PNPDeviceID
+
+        if ($gpuDevices) {
+            foreach ($gpu in $gpuDevices) {
+                $gpuInfo = "GPU: $($gpu.Name) | PNPDeviceID: $($gpu.PNPDeviceID)"
+                Write-Host $gpuInfo -ForegroundColor Green
+                Add-Content -Path $outputFile -Value $gpuInfo
+            }
+        } else {
+            Write-Host "No PCIe GPUs detected." -ForegroundColor Red
+            Add-Content -Path $outputFile -Value "No PCIe GPUs detected."
+        }
+
+        Add-Content -Path $outputFile -Value "`nGPU Details:"
+        Write-Host "`n=== GPU Details ===" -ForegroundColor Yellow
+
+        $gpuDetails = Get-WmiObject Win32_VideoController | 
+            Select-Object Name, AdapterRAM, DriverVersion, PNPDeviceID
+
+        if ($gpuDetails) {
+            foreach ($gpu in $gpuDetails) {
+                $gpuDetailInfo = "GPU: $($gpu.Name) | RAM: $($gpu.AdapterRAM) bytes | Driver: $($gpu.DriverVersion) | PNPDeviceID: $($gpu.PNPDeviceID)"
+                Write-Host $gpuDetailInfo -ForegroundColor Green
+                Add-Content -Path $outputFile -Value $gpuDetailInfo
+            }
+        } else {
+            Write-Host "No GPUs detected in Win32_VideoController." -ForegroundColor Red
+            Add-Content -Path $outputFile -Value "No GPUs detected in Win32_VideoController."
+        }
+
     } catch {
+        Write-Host "Error retrieving PCIe slot or GPU information: $_" -ForegroundColor Red
+        Add-Content -Path $outputFile -Value "Error retrieving PCIe slot or GPU information: $_"
     }
 }
 
